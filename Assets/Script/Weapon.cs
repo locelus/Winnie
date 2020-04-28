@@ -56,12 +56,10 @@ public class Weapon : MonoBehaviour {
         if (semiAuto) {
             //If the gun is semi auto, only call the shoot function when the mouse button is actually pressed
             if (Input.GetButtonDown("Fire1") && Time.time > TimeToFire) {
-                TimeToFire = Time.time + 1 / fireRate;
                 Shoot();
             }
         } else {
             if (Input.GetButton("Fire1") && Time.time > TimeToFire) {
-                TimeToFire = Time.time + 1 / fireRate;
                 Shoot();
             }
         }
@@ -70,6 +68,7 @@ public class Weapon : MonoBehaviour {
     
     //Use the weapon, if there is some reason a weapon can't be used the function will return a number other than 0
     public virtual int Shoot() {
+        TimeToFire = Time.time + 1 / fireRate;
         //If the game is paused, don't let the shoot function continues
         if (Time.timeScale == 0)
             return 1;
