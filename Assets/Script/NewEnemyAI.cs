@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Pathfinding;
+using System;
 
 public class NewEnemyAI : MonoBehaviour {
 
@@ -15,11 +16,11 @@ public class NewEnemyAI : MonoBehaviour {
     public float maxDamagingDistance = 30;
     public LayerMask mask;
     public GameObject sightPoint;
+    public GameObject statusIndicator;
 
+    Vector3 target;
 
-    public Vector3 target;
-
-    public float updateRate = 2f;
+    float updateRate = 2f;
 
     private Seeker seeker;
     private Rigidbody2D rb;
@@ -42,6 +43,12 @@ public class NewEnemyAI : MonoBehaviour {
     public bool searching = false;
 
     public GameObject head;
+    float headAngle;
+
+    public Vector3 playerPos;
+
+    public enum Direction { Left, Right }
+    public Direction directionFacing;
 
     void Start()
     {
@@ -52,7 +59,28 @@ public class NewEnemyAI : MonoBehaviour {
         target = GameMaster.playerObject.transform.position;
         seeker.StartPath(transform.position, target, OnPathComplete);
 
+        directionFacing = GetDirection(head.transform.rotation.eulerAngles.z);
+
         StartCoroutine(UpdatePath());
+    }
+
+    Direction GetDirection(float headAngle)
+    {
+        if (90 > headAngle || headAngle > 270)
+        {
+            Debug.Log("Direction is left with an angle of " + headAngle);
+            if (directionFacing != Direction.Left)
+            {
+                Flip();
+            }
+            return Direction.Left;
+        }
+        Debug.Log("Direction is right with an angle of " + headAngle);
+        if (directionFacing != Direction.Right)
+        {
+            Flip();
+        }
+        return Direction.Right;
     }
 
     IEnumerator UpdatePath()
@@ -115,25 +143,34 @@ public class NewEnemyAI : MonoBehaviour {
         }
 
     }
+
+    public void Flip()
+    {
+        Vector3 theScale = transform.localScale;
+        theScale.x *= -1;
+        transform.localScale = theScale;
+
+        theScale = head.transform.localScale;
+        theScale.y *= -1;
+        head.transform.localScale = theScale;
+
+        theScale = statusIndicator.transform.localScale;
+        theScale.x *= -1;
+        statusIndicator.transform.localScale = theScale;
+    }
+
     public void Update()
     {
-        float headAngle = head.transform.rotation.eulerAngles.z;
-        Vector3 playerPos = GameMaster.playerObject.transform.position;
+        headAngle = head.transform.rotation.eulerAngles.z;
+        playerPos = GameMaster.playerObject.transform.position;
         Vector3 sightPointPos = sightPoint.transform.position;
         rayDirection = playerPos - sightPointPos;
-        rayAngle = Vector3.Angle(rayDirection, -transform.right) - headAngle;
+        rayAngle = Vector3.Angle(rayDirection, -head.transform.right);
+        directionFacing = GetDirection(headAngle);
         rayLength = rayDirection.magnitude;
         hit = Physics2D.Raycast(sightPointPos, rayDirection, mask);
-        //head.transform.eulerAngles = new Vector3(0, 0, -headAngle);
-        //head.transform.LookAt(GameMaster.playerObject.transform.position, head.transform.up);
-        //head.transform.Rotate(new Vector3(0, 90, 0), Space.Self);//correcting the original rotation 
-        Vector3 diff = playerPos - head.transform.position;
-        diff.Normalize();
 
-        float rot_z = Mathf.Atan2(diff.y, diff.x) * Mathf.Rad2Deg;
-        head.transform.rotation = Quaternion.Euler(0f, 0f, rot_z - 180);
-        Debug.Log(head.transform.rotation);
-        if (rayLength < maxViewDistance && rayAngle < maxViewAngle)
+        if (rayLength < maxViewDistance && Math.Abs(rayAngle) < maxViewAngle)
         {
             seen = true;
         }
@@ -152,22 +189,6 @@ public class NewEnemyAI : MonoBehaviour {
             Debug.DrawRay(sightPoint.transform.position, rayDirection);
             weapon.Shoot();
         }
-        return;
-        if (hit.transform.gameObject.name == "Player")
-        {   //If the object hit by the raycast is the player...
-            seen = true;
-        }       //If player is visible, then shoot
-        else
-        {
-            Debug.Log("Not seen");
-            seen = false;
-        }
-        if (seen)
-        {
-            Debug.Log("Seen");
-            weapon.Shoot();
-        }
-        Debug.DrawRay(sightPoint.transform.position, rayDirection);
     }
 
 }

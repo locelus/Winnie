@@ -40,6 +40,7 @@ GameObject:
   m_Component:
   - component: {fileID: 532058421}
   - component: {fileID: 532058422}
+  - component: {fileID: 418001059}
   m_Layer: 0
   m_Name: AlienSpaceship_0
   m_TagString: Untagged
@@ -54,7 +55,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 532058420}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.35860658, z: 0}
   m_LocalScale: {x: 0.51229507, y: 0.51229507, z: 0.51229507}
   m_Children:
@@ -112,6 +113,20 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &418001059
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 532058420}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 136f4b8ecc51c514594548a3be630026, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rotationOffset: -180
+  parentEnemy: {fileID: 0}
 --- !u!1 &1185794284078696
 GameObject:
   m_ObjectHideFlags: 0
@@ -456,14 +471,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   sightPoint: {fileID: 301805626}
-  target: {x: 0, y: 0, z: 0}
-  updateRate: 2
+  statusIndicator: {fileID: 1335926690024698}
   speed: 70
   fMode: 0
   pathIsEnded: 0
   nextWaypointDistance: 3
   searching: 0
   head: {fileID: 532058420}
+  playerPos: {x: 0, y: 0, z: 0}
+  directionFacing: 0
 --- !u!60 &524921907
 PolygonCollider2D:
   m_ObjectHideFlags: 0
