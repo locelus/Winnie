@@ -88,7 +88,11 @@ public class Firearm : Weapon
     public override int Shoot() {
         if ((curAmmo <= 0 && needsAmmo) || reloading)
             return 1;
-        base.Shoot();
+        int test = base.Shoot();
+        if (test == 1)
+        {
+            return 1;
+        }
         //If the current ammo is existent
         if (curAmmo > 0 && needsAmmo) {
             curAmmo--;

@@ -50,6 +50,9 @@ public class NewEnemyAI : MonoBehaviour {
     public enum Direction { Left, Right }
     public Direction directionFacing;
 
+    public float jumpForce = 10f;
+    public float maxMovementSpeed = 10f;
+
     void Start()
     {
         seeker = GetComponent<Seeker>();
@@ -68,14 +71,12 @@ public class NewEnemyAI : MonoBehaviour {
     {
         if (90 > headAngle || headAngle > 270)
         {
-            Debug.Log("Direction is left with an angle of " + headAngle);
             if (directionFacing != Direction.Left)
             {
                 Flip();
             }
             return Direction.Left;
         }
-        Debug.Log("Direction is right with an angle of " + headAngle);
         if (directionFacing != Direction.Right)
         {
             Flip();
@@ -127,12 +128,19 @@ public class NewEnemyAI : MonoBehaviour {
         }
         pathIsEnded = false;
 
-        Vector3 dir = (path.vectorPath[currentWaypoint] - transform.position).normalized;
-        dir *= speed * Time.fixedDeltaTime * 20;
+        Vector2 dir = (path.vectorPath[currentWaypoint] - transform.position).normalized;
+        dir *= speed * Time.fixedDeltaTime;
 
-        if (searching && rayLength > maxDamagingDistance)
+        if (searching && rayLength > maxDamagingDistance || !seen)
         {
-            rb.AddForce(dir, fMode);
+            if (directionFacing == Direction.Left)
+            {
+                rb.velocity = new Vector2(-maxMovementSpeed, rb.velocity.y);
+            }
+            else
+            {
+                rb.velocity = new Vector2(maxMovementSpeed, rb.velocity.y);
+            }
         }
         float dist = Vector3.Distance(transform.position, path.vectorPath[currentWaypoint]);
 
@@ -154,6 +162,10 @@ public class NewEnemyAI : MonoBehaviour {
         theScale.y *= -1;
         head.transform.localScale = theScale;
 
+        theScale = sightPoint.transform.localPosition;
+        theScale.x *= -1;
+        sightPoint.transform.localPosition = theScale;
+
         theScale = statusIndicator.transform.localScale;
         theScale.x *= -1;
         statusIndicator.transform.localScale = theScale;
@@ -170,9 +182,12 @@ public class NewEnemyAI : MonoBehaviour {
         rayLength = rayDirection.magnitude;
         hit = Physics2D.Raycast(sightPointPos, rayDirection, mask);
 
-        if (rayLength < maxViewDistance && Math.Abs(rayAngle) < maxViewAngle)
+        if (rayLength < maxViewDistance && Math.Abs(rayAngle) < maxViewAngle && hit.collider.gameObject.CompareTag("Player"))
         {
             seen = true;
+            searching = false;
+            Debug.DrawRay(sightPointPos, rayDirection);
+            weapon.Shoot();
         }
         else
         {
@@ -186,9 +201,17 @@ public class NewEnemyAI : MonoBehaviour {
         }
         if (seen)
         {
-            Debug.DrawRay(sightPoint.transform.position, rayDirection);
+            searching = false;
+            Debug.DrawRay(sightPointPos, rayDirection);
             weapon.Shoot();
         }
+    }
+
+    void OnTriggerEnter2D (Collider2D col)
+    {
+        //Jump
+        Debug.Log("Jump");
+        rb.AddForce(new Vector2(0f, jumpForce));
     }
 
 }

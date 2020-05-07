@@ -31,12 +31,5 @@ public class HeadRotation : MonoBehaviour
         float _rotZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;   // find the angle in degrees
 
         transform.rotation = Quaternion.Euler(0f, 0f, _rotZ + rotationOffset);
-        Debug.Log(_rotZ);
-        if (parentEnemy.directionFacing == NewEnemyAI.Direction.Left)
-        {
-            Vector3 theScale = transform.localScale;
-            theScale.x *= -1;
-            transform.localScale = theScale;
-        }
     }
 }

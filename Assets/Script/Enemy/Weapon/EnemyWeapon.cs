@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EnemyWeapon : Firearm {
+public class EnemyWeapon : EnemyFirearm {
     public Transform bulletTrailPrefab;
     public float effectSpawnRate;
     public Transform muzzleFlashPrefab;
@@ -46,7 +46,6 @@ public class EnemyWeapon : Firearm {
     {
         if (Time.time < TimeToFire)
             return 1;
-        Debug.Log(TimeToFire);
         Vector2 playerPos = GameMaster.playerObject.transform.position;
         //First see if the player can fire the weapon
         int test = base.Shoot();

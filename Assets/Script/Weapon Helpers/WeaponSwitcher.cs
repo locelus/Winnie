@@ -16,6 +16,10 @@ public class WeaponSwitcher : MonoBehaviour {
 
     // Update is called once per frame
     void Update () {
+        if (Time.timeScale == 0)
+        {
+            return;
+        }
         if (Input.GetAxis("Mouse ScrollWheel") > 0f) {  //If player scrolls down
             scrollWheelIndex++;                         //Add to scrollWheelIndex for roll around purposes
             if (scrollWheelIndex + 1 > weapons.Length) {
