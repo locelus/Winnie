@@ -129,9 +129,11 @@ public class NewEnemyAI : MonoBehaviour {
         pathIsEnded = false;
 
         Vector2 dir = (path.vectorPath[currentWaypoint] - transform.position).normalized;
-        dir *= speed * Time.fixedDeltaTime;
+        if (seen) {
+            dir *= speed * Time.fixedDeltaTime;
+        }
 
-        if (searching && rayLength > maxDamagingDistance || !seen)
+        if (searching && (rayLength > maxDamagingDistance || !seen))
         {
             if (directionFacing == Direction.Left)
             {
